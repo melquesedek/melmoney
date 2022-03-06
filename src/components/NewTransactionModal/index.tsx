@@ -1,8 +1,10 @@
+import { appendFileSync } from 'fs';
 import { FormEvent, useState } from 'react';
 import Modal from 'react-modal';
 import closeImg from '../../assets/close.svg';
 import incomeImg from '../../assets/income.svg';
 import outcomeImg from '../../assets/outcome.svg';
+import { api } from '../../services/api';
 import { Container, TransactionTypeContainer, RadioBox } from './styles';
 
 interface NewTransactionModalProps{
@@ -22,12 +24,16 @@ export function NewTransactionModal({isOpen, onRequestClose} : NewTransactionMod
     //Função para tratar os dados recebidos do formulário.
     function handleCreateNewTransaction(event : FormEvent){
         event.preventDefault();
-        console.log({
+        //Salvando os campos na variável data
+        const data = {
             title,
             value,
             category,
             type,
-        })
+        };
+
+        api.post('transactions', data);
+
     }
 
     return (
