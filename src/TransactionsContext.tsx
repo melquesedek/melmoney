@@ -43,8 +43,23 @@ export function TransactionsProviver({children} : TransactionsProvierProps){
 
     //Função assincrona para ter como aguardar ela finalizar antes
     //await para esperar
-    async function createTransaction(transaction: TransactionInput){
-        await api.post('/transactions', transaction);
+    //Trocado nome da variável da função para melhorar campos internos
+    async function createTransaction(transactionInput: TransactionInput){
+        //const response para ter resposta da requisição
+        const response = await api.post('/transactions', {
+            //Manter valor do TransactionInput
+            ...transactionInput,
+            //Incluindo o createdAt
+            createdAt: new Date(),
+        });
+        //pegando a transação de response.data
+        const {transaction} = response.data;
+        //Colocando transação no setTransactions
+        setTransactions([
+            //Mantendo informações com ... e adicionando mais uma transaction
+            ...transactions,
+            transaction,
+        ]);
     }
 
     return(
