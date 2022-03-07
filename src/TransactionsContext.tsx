@@ -13,8 +13,25 @@ interface Transaction{
 interface TransactionsProvierProps{
     children: ReactNode;
 }
+//Forma básica de fazer.
+/*interface TransactionInput{
+    title: string;
+    amount: number;
+    type: string;
+    category: string;
+}*/
+//O TransactionInput herda todos os campos do Transaction, exceto id e createdAt
+type TransactionInput = Omit<Transaction, 'id' | 'createdAt'>;
+//Daria para usar o Pick e escolher os campos
 
-export const TransactionsContext = createContext<Transaction[]>([]);
+interface TransactionsContextData{
+    transactions: Transaction[];
+    createTransaction: (transaction: TransactionInput) => void;
+}
+
+export const TransactionsContext = createContext<TransactionsContextData>(
+    {} as TransactionsContextData
+    );
 
 export function TransactionsProviver({children} : TransactionsProvierProps){
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -23,8 +40,12 @@ export function TransactionsProviver({children} : TransactionsProvierProps){
         .then(response => setTransactions(response.data.transactions))
     },[]);
 
+    function createTransaction(transaction: TransactionInput){
+        api.post('/transactions', transaction);
+    }
+
     return(
-        <TransactionsContext.Provider value={transactions}>
+        <TransactionsContext.Provider value={{transactions, createTransaction}}>
             {children}
         </TransactionsContext.Provider>
     );
