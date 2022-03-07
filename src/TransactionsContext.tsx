@@ -26,7 +26,8 @@ type TransactionInput = Omit<Transaction, 'id' | 'createdAt'>;
 
 interface TransactionsContextData{
     transactions: Transaction[];
-    createTransaction: (transaction: TransactionInput) => void;
+    //Toda função assincrona retorna uma Promise
+    createTransaction: (transaction: TransactionInput) => Promise<void>;
 }
 
 export const TransactionsContext = createContext<TransactionsContextData>(
@@ -40,8 +41,10 @@ export function TransactionsProviver({children} : TransactionsProvierProps){
         .then(response => setTransactions(response.data.transactions))
     },[]);
 
-    function createTransaction(transaction: TransactionInput){
-        api.post('/transactions', transaction);
+    //Função assincrona para ter como aguardar ela finalizar antes
+    //await para esperar
+    async function createTransaction(transaction: TransactionInput){
+        await api.post('/transactions', transaction);
     }
 
     return(

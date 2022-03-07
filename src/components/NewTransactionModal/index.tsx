@@ -25,15 +25,22 @@ export function NewTransactionModal({isOpen, onRequestClose} : NewTransactionMod
     const [type, setType] = useState('deposit');
 
     //Função para tratar os dados recebidos do formulário.
-    function handleCreateNewTransaction(event : FormEvent){
+    //async para ela ser assincrona
+    async function handleCreateNewTransaction(event : FormEvent){
         event.preventDefault();
         //Salvando os campos na variável data no arquivo de TransactionsContext
-        createTransaction({
+        await createTransaction({
             title,
             amount,
             category,
             type,
         })
+
+        setTitle('');
+        setAmount(0);
+        setCategory('');
+        setType('deposit');
+        onRequestClose();
     }
 
     return (
